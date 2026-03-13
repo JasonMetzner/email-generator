@@ -1,68 +1,79 @@
 /*
-  Dark analytic dashboard theme for the email template builder.
-  This stylesheet defines a dark color palette inspired by analytics dashboards.
-  It uses subtle gradients, smooth scrollbars, and vibrant accent colors for buttons.
+  Dark analytics dashboard-inspired styles for the email template builder.
+  The palette uses deep blues and rich neutrals with neon accents to
+  evoke a modern analytics interface similar to the supplied example.
+  Design removes excess whitespace, ensures scrollability, and adds
+  subtle shadows and gradients for visual depth.
 */
 
+/* Colour variables */
 :root {
-  --bg-color: #0b132b;
-  --container-color: #1f2a47;
-  --sidebar-color: #15213a;
-  --input-color: #1f2a47;
-  --border-color: #2f3a59;
-  --accent-gradient-start: #06b6d4;
-  --accent-gradient-end: #3b82f6;
-  --button-hover-opacity: 0.85;
-  --text-color: #f3f4f6;
-  --text-secondary: #a0aec0;
+  --bg-color: #0f172a;
+  --sidebar-bg: #18293a;
+  --container-bg: #152238;
+  --card-bg: #1e2d40;
+  --accent-primary: #00e4d2;
+  --accent-secondary: #38f9fe;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --border-color: #243956;
+  --button-radius: 8px;
 }
 
 body {
   margin: 0;
   font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
-  height: 100vh;
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
   display: flex;
   justify-content: center;
-  align-items: stretch;
-  background: var(--bg-color);
-  color: var(--text-color);
-  overflow: hidden;
+  align-items: flex-start;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 
-/* Main container splits sidebar and preview */
+/* Container for the sidebar and preview area */
 #app-container {
   display: flex;
   width: 100%;
-  height: 100vh;
-  background: var(--container-color);
+  max-width: 1400px;
+  background-color: var(--container-bg);
+  border-radius: 12px;
   overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-/* Sidebar styles */
+/* Sidebar styling */
 #sidebar {
-  width: 300px;
-  background: var(--sidebar-color);
-  padding: 20px;
+  width: 340px;
+  background-color: var(--sidebar-bg);
+  border-right: 1px solid var(--border-color);
+  padding: 24px;
   overflow-y: auto;
   box-sizing: border-box;
 }
 
 #sidebar h1 {
-  font-size: 22px;
-  margin: 0 0 16px;
+  font-size: 20px;
+  margin: 0 0 20px;
   font-weight: 600;
-  color: var(--text-color);
+  color: var(--text-primary);
 }
 
 #sidebar label {
   display: block;
-  margin-top: 12px;
+  margin-top: 14px;
   margin-bottom: 6px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-secondary);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* Input controls */
+/* Common input styles */
 #template-select,
 #sidebar input[type="text"],
 #sidebar input[type="url"],
@@ -71,76 +82,79 @@ body {
 #sidebar textarea,
 #sidebar select {
   width: 100%;
-  padding: 8px 10px;
-  margin-bottom: 12px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background: var(--input-color);
-  color: var(--text-color);
+  border-radius: var(--button-radius);
+  background-color: var(--card-bg);
   font-size: 14px;
+  color: var(--text-primary);
   box-sizing: border-box;
 }
 
 #sidebar input[type="color"] {
+  height: 40px;
   padding: 4px;
 }
 
 #sidebar textarea {
   resize: vertical;
-  min-height: 60px;
+  min-height: 80px;
   max-height: 200px;
 }
 
 #sidebar .field-group {
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
-/* Primary button */
+/* Main export button styling */
 #sidebar button {
   width: 100%;
-  padding: 12px 14px;
+  padding: 12px;
+  background-image: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  color: #0f172a;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--button-radius);
   cursor: pointer;
   font-size: 15px;
   font-weight: 600;
-  color: #fff;
-  background-image: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end));
-  transition: opacity 0.2s ease-in-out;
-  margin-top: 20px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 #sidebar button:hover {
-  opacity: var(--button-hover-opacity);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
-/* Preview area */
+/* Preview container styling */
 #preview-container {
   flex: 1;
-  padding: 20px;
+  padding: 24px;
+  background-color: var(--card-bg);
   overflow-y: auto;
   box-sizing: border-box;
-  background: var(--container-color);
 }
 
 #preview-container h2 {
   margin-top: 0;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 600;
-  color: var(--text-color);
-  margin-bottom: 16px;
+  color: var(--text-primary);
+  margin-bottom: 18px;
 }
 
-/* Iframe preview */
+/* Iframe preview styling */
 #preview-frame {
   width: 100%;
-  height: calc(100vh - 80px);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--sidebar-color);
+  min-height: calc(100vh - 200px);
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-radius: var(--button-radius);
+  background-color: #fff;
 }
 
-/* Chat bubble field */
+/* Chat bubble message field styling */
 .message-field {
   display: flex;
   align-items: center;
@@ -152,52 +166,39 @@ body {
   flex: 1;
   padding: 8px 10px;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--button-radius);
   font-size: 14px;
-  background: var(--input-color);
-  color: var(--text-color);
+  background-color: var(--card-bg);
+  color: var(--text-primary);
 }
 
 .message-field select {
-  width: 100px;
+  width: 110px;
   padding: 8px 10px;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background: var(--input-color);
-  color: var(--text-color);
+  border-radius: var(--button-radius);
+  background-color: var(--card-bg);
   font-size: 14px;
+  color: var(--text-primary);
 }
 
-/* Add bubble button */
 .add-bubble-button {
   display: block;
   width: 100%;
-  background-image: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end));
-  color: #fff;
+  background-image: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  color: #0f172a;
   border: none;
   padding: 10px;
-  border-radius: 8px;
+  border-radius: var(--button-radius);
   cursor: pointer;
-  margin-top: 12px;
-  font-size: 15px;
+  margin-top: 8px;
+  font-size: 14px;
   font-weight: 600;
-  transition: opacity 0.2s ease-in-out;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .add-bubble-button:hover {
-  opacity: var(--button-hover-opacity);
-}
-
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--sidebar-color);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 4px;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
