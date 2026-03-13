@@ -1,159 +1,203 @@
-/* Modern layout for the email template builder */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+/*
+  Dark analytic dashboard theme for the email template builder.
+  This stylesheet defines a dark color palette inspired by analytics dashboards.
+  It uses subtle gradients, smooth scrollbars, and vibrant accent colors for buttons.
+*/
+
+:root {
+  --bg-color: #0b132b;
+  --container-color: #1f2a47;
+  --sidebar-color: #15213a;
+  --input-color: #1f2a47;
+  --border-color: #2f3a59;
+  --accent-gradient-start: #06b6d4;
+  --accent-gradient-end: #3b82f6;
+  --button-hover-opacity: 0.85;
+  --text-color: #f3f4f6;
+  --text-secondary: #a0aec0;
+}
 
 body {
   margin: 0;
-  font-family: 'Poppins', Arial, sans-serif;
-  min-height: 100vh;
-  background: radial-gradient(at top left, #8ec5fc 0%, #e0c3fc 50%) no-repeat,
-              radial-gradient(at bottom right, #fbc2eb 0%, #a6c1ee 50%) no-repeat,
-              linear-gradient(to bottom, #e0f7fa, #ffffff);
-  background-size: 80% 80%, 80% 80%, 100% 100%;
-  background-position: top left, bottom right, center;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  height: 100vh;
   display: flex;
+  justify-content: center;
+  align-items: stretch;
+  background: var(--bg-color);
+  color: var(--text-color);
   overflow: hidden;
 }
 
+/* Main container splits sidebar and preview */
 #app-container {
   display: flex;
-  flex: 1;
-  margin: 20px;
-  background: rgba(255,255,255,0.85);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  width: 100%;
+  height: 100vh;
+  background: var(--container-color);
   overflow: hidden;
-  backdrop-filter: blur(12px);
 }
 
+/* Sidebar styles */
 #sidebar {
-  width: 330px;
-  max-width: 100%;
-  padding: 24px;
-  background: rgba(255,255,255,0.6);
-  border-right: 1px solid rgba(0,0,0,0.05);
+  width: 300px;
+  background: var(--sidebar-color);
+  padding: 20px;
   overflow-y: auto;
+  box-sizing: border-box;
 }
 
 #sidebar h1 {
-  margin: 0;
-  margin-bottom: 16px;
-  font-size: 26px;
+  font-size: 22px;
+  margin: 0 0 16px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-color);
 }
 
 #sidebar label {
   display: block;
-  margin-top: 14px;
-  margin-bottom: 4px;
+  margin-top: 12px;
+  margin-bottom: 6px;
   font-weight: 500;
-  color: #444;
+  color: var(--text-secondary);
 }
 
+/* Input controls */
+#template-select,
 #sidebar input[type="text"],
+#sidebar input[type="url"],
 #sidebar input[type="color"],
 #sidebar input[type="file"],
-#sidebar select,
-#sidebar textarea {
+#sidebar textarea,
+#sidebar select {
   width: 100%;
-  padding: 10px 14px;
-  border: 1px solid rgba(0,0,0,0.1);
-  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--input-color);
+  color: var(--text-color);
   font-size: 14px;
-  margin-bottom: 8px;
-  background: rgba(255,255,255,0.9);
   box-sizing: border-box;
 }
 
-#sidebar input[type="range"] {
-  width: 100%;
-  margin-bottom: 12px;
+#sidebar input[type="color"] {
+  padding: 4px;
 }
 
+#sidebar textarea {
+  resize: vertical;
+  min-height: 60px;
+  max-height: 200px;
+}
+
+#sidebar .field-group {
+  margin-bottom: 16px;
+}
+
+/* Primary button */
 #sidebar button {
-  display: inline-block;
-  margin-top: 16px;
-  padding: 12px 20px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff;
-  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+  width: 100%;
+  padding: 12px 14px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  background-image: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end));
+  transition: opacity 0.2s ease-in-out;
+  margin-top: 20px;
 }
 
 #sidebar button:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  transform: translateY(-2px);
+  opacity: var(--button-hover-opacity);
 }
 
-#template-select {
-  margin-bottom: 12px;
-}
-
-#template-select select {
-  width: 100%;
-  padding: 10px 14px;
-  border: 1px solid rgba(0,0,0,0.1);
-  border-radius: 8px;
-  font-size: 14px;
-  background: rgba(255,255,255,0.9);
-}
-
-#fields-container {
-  margin-top: 10px;
-}
-
-#bubble-container {
-  margin-top: 10px;
-}
-
-#bubble-container > div {
-  margin-bottom: 12px;
-}
-
-#bubble-container .bubble-group label {
-  font-size: 14px;
-  margin: 4px 0;
-}
-
-#bubble-container .bubble-group input[type="text"] {
-  margin-bottom: 8px;
-}
-
-#bubble-container button {
-  display: inline-block;
-  margin-top: 10px;
-  margin-right: 8px;
-  padding: 10px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff;
-  background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-#bubble-container button:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  transform: translateY(-2px);
-}
-
+/* Preview area */
 #preview-container {
   flex: 1;
-  background: rgba(255,255,255,0.7);
-  padding: 24px;
+  padding: 20px;
   overflow-y: auto;
+  box-sizing: border-box;
+  background: var(--container-color);
 }
 
+#preview-container h2 {
+  margin-top: 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 16px;
+}
+
+/* Iframe preview */
 #preview-frame {
   width: 100%;
-  min-height: calc(100vh - 80px);
+  height: calc(100vh - 80px);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--sidebar-color);
+}
+
+/* Chat bubble field */
+.message-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.message-field input[type="text"] {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 14px;
+  background: var(--input-color);
+  color: var(--text-color);
+}
+
+.message-field select {
+  width: 100px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--input-color);
+  color: var(--text-color);
+  font-size: 14px;
+}
+
+/* Add bubble button */
+.add-bubble-button {
+  display: block;
+  width: 100%;
+  background-image: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end));
+  color: #fff;
   border: none;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.add-bubble-button:hover {
+  opacity: var(--button-hover-opacity);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--sidebar-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
 }
