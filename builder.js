@@ -3,7 +3,35 @@
  *
  * This script powers the interactive builder defined in builder.html.  It
  * dynamically loads a set of pre‑defined templates, generates form
- * controls for user customization, updates a live preview, and exports a
+ * c
+ (() => {
+  const style = document.createElement('style');
+  style.textContent = `
+    body { background-color:#0f172a; color:#f3f4f6; margin:0; height:100vh; display:flex; overflow-y:auto; font-family:'Inter','Helvetica Neue',Arial,sans-serif; }
+    #app-container { display:flex; width:100%; min-height:100vh; }
+    #sidebar { width:280px; background-color:#15213a; padding:20px; overflow-y:auto; box-sizing:border-box; }
+    #sidebar h1 { color:#f3f4f6; font-size:20px; margin:0 0 12px; font-weight:600; }
+    #sidebar label { color:#94a3b8; font-size:13px; margin:8px 0 4px; display:block; }
+    #sidebar input, #sidebar select, #sidebar textarea { width:100%; background-color:#1e293b; color:#f3f4f6; border:1px solid #2e3a5d; border-radius:5px; padding:8px 10px; margin-bottom:10px; font-size:14px; box-sizing:border-box; }
+    #sidebar textarea { resize:vertical; min-height:60px; max-height:200px; }
+    #sidebar button { width:100%; padding:10px; margin-top:14px; border:none; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer; color:#fff; background-image:linear-gradient(135deg,#806af6,#3b82f6); transition:opacity .2s; }
+    #sidebar button:hover { opacity:0.85; }
+    .add-bubble-button { background-image:linear-gradient(135deg,#22c55e,#3abff8); }
+    #preview-container { flex:1; padding:20px; background-color:#1e293b; overflow-y:auto; box-sizing:border-box; }
+    #preview-container h2 { color:#f3f4f6; font-size:20px; margin:0 0 12px; font-weight:600; }
+    #preview-frame { width:100%; height:calc(100vh - 80px); border:1px solid #2e3a5d; border-radius:6px; background-color:#15213a; }
+    .message-field { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+    .message-field input[type="text"], .message-field select, .message-field input[type="color"], .message-field input[type="number"] { background-color:#1e293b; color:#f3f4f6; border:1px solid #2e3a5d; border-radius:5px; padding:6px 8px; font-size:14px; }
+  `;
+  document.head.appendChild(style);
+  const cssLink = document.querySelector('link[rel="stylesheet"][href*="builder.css"]');
+  if (cssLink) {
+    const clean = cssLink.getAttribute('href').split('?')[0];
+    cssLink.setAttribute('href', clean + '?v=' + Date.now());
+  }
+})();
+
+ontrols for user customization, updates a live preview, and exports a
  * finished template as a ZIP package.  The ZIP includes the HTML
  * template, any images the user selected, and a plain text file with
  * instructions for uploading the template to HubSpot.  Default hero
@@ -12,7 +40,8 @@
 
 document.addEventListener('DOMContentLoaded', () => {
  
-      // Force refresh of CSS by appending query parameter
+      // Force refresh of CSS 
+ by appending query parameter
     const stylesheetLink = document.querySelector('link[rel="stylesheet"][href*="builder.css"]');
     if (stylesheetLink) {
         const href = stylesheetLink.getAttribute('href');
@@ -57,7 +86,8 @@ const templateSelect = document.getElementById('template-select');
   function hexToRgba(hex, opacity) {
     let h = (hex || '#ffffff').replace('#', '');
     if (h.length === 3) {
-      // Expand shorthand colors (e.g. #abc to #aabbcc)
+      // Expand short
+     hand colors (e.g. #abc to #aabbcc)
       h = h.split('').map(c => c + c).join('');
     }
     const bigint = parseInt(h, 16);
