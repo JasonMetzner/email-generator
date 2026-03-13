@@ -39,6 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Data URI string (e.g. "data:image/jpeg;base64,...").
   const baseImages = {};
 
+  // Variables used for drag‑and‑drop reordering of fields and
+  // chat messages.  These hold the index of the item currently
+  // being dragged.  They are set during dragstart and reset
+  // after the drop operation.
+  let dragStartIndex = null;
+  let dragMsgStartIndex = null;
+
   // Internal state tracking.  `currentTemplate` holds the active template
   // definition, `currentValues` stores the values of fields for that
   // template, and `chatMessages` is used only for the chat template to
@@ -66,6 +73,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const b = bigint & 255;
     const a = typeof opacity === 'number' ? opacity : 1;
     return `rgba(${r}, ${g}, ${b}, ${a})`;
+  }
+
+  /**
+   * Lighten a hex color by a given percentage.  The percentage should be
+   * a float between 0 and 1.  A value of 0 returns the original color,
+   * while 1 returns pure white.  If the hex input is invalid the
+   * original input is returned unchanged.
+   * @param {string} hex - A color in the form #RRGGBB or #RGB.
+   * @param {number} percent - The amount to lighten (0–1).
+   * @returns {string} A hex color string of the lightened color.
+   */
+  function lightenColor(hex, percent) {
+    let h = (hex || '#ffffff').replace('#', '');
+    if (h.length === 3) {
+      h = h.split('').map(c => c + c).join('');
+    }
+    const num = parseInt(h, 16);
+    let r = (num >> 16) & 255;
+    let g = (num >> 8) & 255;
+    let b = num & 255;
+    r = Math.round(r + (255 - r) * percent);
+    g = Math.round(g + (255 - g) * percent);
+    b = Math.round(b + (255 - b) * percent);
+    const toHex = v => v.toString(16).padStart(2, '0');
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
   }
 
   /**
@@ -120,6 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
           { label: 'Body Text', name: 'body', type: 'textarea', default: 'Discover the features that will change your workflow.' },
           { label: 'Button Text', name: 'buttonText', type: 'text', default: 'Learn More' },
           { label: 'Button Color', name: 'buttonColor', type: 'color', default: '#007bff' },
+          { label: 'Button Style', name: 'buttonStyle', type: 'select', options: ['solid', 'outline', 'gradient'], default: 'solid' },
           { label: 'Background Color', name: 'bgColor', type: 'color', default: '#ffffff' },
           { label: 'Background Opacity (%)', name: 'bgOpacity', type: 'number', default: '100', min: 0, max: 100 },
           { label: 'Company Name', name: 'companyName', type: 'text', default: 'Your Company' },
@@ -145,6 +178,19 @@ document.addEventListener('DOMContentLoaded', () => {
           const body = values.body ? values.body.replace(/\n/g, '<br>') : '';
           const buttonText = values.buttonText || '';
           const buttonColor = values.buttonColor || '#007bff';
+          // Determine the button style (solid, outline or gradient) and build
+          // the appropriate inline CSS string.  Gradient style uses a
+          // lightened version of the primary color for the gradient stop.
+          const btnStyleOpt = values.buttonStyle || 'solid';
+          let btnStyleStr;
+          if (btnStyleOpt === 'outline') {
+            btnStyleStr = `display:inline-block;background-color:transparent;color:${buttonColor};padding:12px 24px;border-radius:4px;border:2px solid ${buttonColor};text-decoration:none;`;
+          } else if (btnStyleOpt === 'gradient') {
+            const lightColor = lightenColor(buttonColor, 0.3);
+            btnStyleStr = `display:inline-block;background-image:linear-gradient(45deg, ${buttonColor}, ${lightColor});color:#ffffff;padding:12px 24px;border-radius:4px;text-decoration:none;`;
+          } else {
+            btnStyleStr = `display:inline-block;background-color:${buttonColor};color:#ffffff;padding:12px 24px;border-radius:4px;text-decoration:none;`;
+          }
           const companyName = values.companyName || '';
           const companyAddress = values.companyAddress || '';
           return `<!DOCTYPE html>` +
@@ -156,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `<tr><td style="padding:20px;text-align:center;">` +
             `<h1 style="font-size:28px;color:#333333;margin:0 0 10px;">${heading}</h1>` +
             `<p style="font-size:16px;line-height:24px;color:#555555;margin:0 0 20px;">${body}</p>` +
-            `<a href="#" style="display:inline-block;background-color:${buttonColor};color:#ffffff;padding:12px 24px;border-radius:4px;text-decoration:none;">${buttonText}</a>` +
+            `<a href="#" style="${btnStyleStr}">${buttonText}</a>` +
             `</td></tr>` +
             `<tr><td style="padding:30px 20px;font-size:12px;color:#888888;text-align:center;">` +
             `<p style="margin:0;">&copy; ${yearVal} ${companyName}. ${companyAddress}</p>` +
@@ -197,6 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
           { label: 'Feature 3 Image', name: 'feature3Img', type: 'image', default: baseImages.hero3 || '' },
           { label: 'Button Text', name: 'buttonText2', type: 'text', default: 'Get Started' },
           { label: 'Button Color', name: 'buttonColor2', type: 'color', default: '#007bff' },
+        { label: 'Button Style', name: 'buttonStyle2', type: 'select', options: ['solid', 'outline', 'gradient'], default: 'solid' },
           { label: 'Background Color', name: 'bgColor2', type: 'color', default: '#ffffff' },
           { label: 'Company Name', name: 'companyName2', type: 'text', default: 'Your Company' },
           { label: 'Company Address', name: 'companyAddress2', type: 'text', default: '123 Main Street, City, Country' },
@@ -221,6 +268,17 @@ document.addEventListener('DOMContentLoaded', () => {
           const ft3Desc = values.feature3Desc ? values.feature3Desc.replace(/\n/g, '<br>') : '';
           const buttonText = values.buttonText2 || '';
           const buttonColor = values.buttonColor2 || '#007bff';
+          // Determine the button style for template2 (solid, outline, gradient).
+          const btnStyleOpt2 = values.buttonStyle2 || 'solid';
+          let btnStyleStr2;
+          if (btnStyleOpt2 === 'outline') {
+            btnStyleStr2 = `display:inline-block;background-color:transparent;color:${buttonColor};padding:12px 24px;border-radius:4px;border:2px solid ${buttonColor};text-decoration:none;`;
+          } else if (btnStyleOpt2 === 'gradient') {
+            const lightColor2 = lightenColor(buttonColor, 0.3);
+            btnStyleStr2 = `display:inline-block;background-image:linear-gradient(45deg, ${buttonColor}, ${lightColor2});color:#ffffff;padding:12px 24px;border-radius:4px;text-decoration:none;`;
+          } else {
+            btnStyleStr2 = `display:inline-block;background-color:${buttonColor};color:#ffffff;padding:12px 24px;border-radius:4px;text-decoration:none;`;
+          }
           const bgColor = values.bgColor2 || '#ffffff';
           const yearVal = values.year2 || new Date().getFullYear();
           const companyName = values.companyName2 || '';
@@ -257,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `</table>` +
             `</td></tr>` +
             `<tr><td style="padding:20px;text-align:center;">` +
-            `<a href="#" style="display:inline-block;background-color:${buttonColor};color:#ffffff;padding:12px 24px;border-radius:4px;text-decoration:none;">${buttonText}</a>` +
+            `<a href="#" style="${btnStyleStr2}">${buttonText}</a>` +
             `</td></tr>` +
             `<tr><td style="padding:30px 20px;font-size:12px;color:#888888;text-align:center;">` +
             `<p style="margin:0;">&copy; ${yearVal} ${companyName}. ${companyAddress}</p>` +
@@ -285,6 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
           { label: 'Chat Background Opacity (%)', name: 'chatBgOpacity', type: 'number', default: '100', min: 0, max: 100 },
           { label: 'Button Text', name: 'buttonText3', type: 'text', default: 'Contact Us' },
           { label: 'Button Color', name: 'buttonColor3', type: 'color', default: '#007bff' },
+        { label: 'Button Style', name: 'buttonStyle3', type: 'select', options: ['solid', 'outline', 'gradient'], default: 'solid' },
           { label: 'Company Name', name: 'companyName3', type: 'text', default: 'Your Company' },
           { label: 'Company Address', name: 'companyAddress3', type: 'text', default: '123 Main Street, City, Country' },
           { label: 'Year', name: 'year3', type: 'text', default: new Date().getFullYear().toString() }
@@ -299,6 +358,17 @@ document.addEventListener('DOMContentLoaded', () => {
           const chatBgRgba = hexToRgba(values.chatBgColor || '#f5f5f5', isNaN(chatBgOpacity) ? 1 : chatBgOpacity / 100);
           const btnText = values.buttonText3 || '';
           const btnColor = values.buttonColor3 || '#007bff';
+          // Determine the button style for the chat template.
+          const btnStyleOpt3 = values.buttonStyle3 || 'solid';
+          let btnStyleStr3;
+          if (btnStyleOpt3 === 'outline') {
+            btnStyleStr3 = `display:inline-block;background-color:transparent;color:${btnColor};padding:12px 24px;border-radius:4px;border:2px solid ${btnColor};text-decoration:none;`;
+          } else if (btnStyleOpt3 === 'gradient') {
+            const lightColor3 = lightenColor(btnColor, 0.3);
+            btnStyleStr3 = `display:inline-block;background-image:linear-gradient(45deg, ${btnColor}, ${lightColor3});color:#ffffff;padding:12px 24px;border-radius:4px;text-decoration:none;`;
+          } else {
+            btnStyleStr3 = `display:inline-block;background-color:${btnColor};color:#ffffff;padding:12px 24px;border-radius:4px;text-decoration:none;`;
+          }
           const yearVal = values.year3 || new Date().getFullYear();
           const companyName = values.companyName3 || '';
           const companyAddress = values.companyAddress3 || '';
@@ -322,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">${msgRows}</table>` +
             `</td></tr>` +
             `<tr><td style="padding:20px;text-align:center;">` +
-            `<a href="#" style="display:inline-block;background-color:${btnColor};color:#ffffff;padding:12px 24px;border-radius:4px;text-decoration:none;">${btnText}</a>` +
+            `<a href="#" style="${btnStyleStr3}">${btnText}</a>` +
             `</td></tr>` +
             `<tr><td style="padding:30px 20px;font-size:12px;color:#888888;text-align:center;">` +
             `<p style="margin:0;">&copy; ${yearVal} ${companyName}. ${companyAddress}</p>` +
@@ -439,6 +509,10 @@ document.addEventListener('DOMContentLoaded', () => {
       template.fields.forEach(field => {
         createField(field);
       });
+      // After rendering all fields, attach drag‑and‑drop handlers to
+      // enable reordering.  This must be done here so that the
+      // dataset index corresponds to the current order of fields.
+      attachDragHandlersToFields();
     }
   }
 
@@ -519,6 +593,24 @@ document.addEventListener('DOMContentLoaded', () => {
       input.type = 'color';
       input.id = field.name;
       input.value = currentValues[field.name] || field.default || '#ffffff';
+      input.addEventListener('change', () => {
+        currentValues[field.name] = input.value;
+        updatePreview();
+      });
+    } else if (field.type === 'select') {
+      // Dropdown/select input for enumerated options
+      input = document.createElement('select');
+      input.id = field.name;
+      // Populate options from the field definition
+      (field.options || []).forEach(optVal => {
+        const opt = document.createElement('option');
+        opt.value = optVal;
+        opt.textContent = optVal.charAt(0).toUpperCase() + optVal.slice(1);
+        if ((currentValues[field.name] || field.default) === optVal) {
+          opt.selected = true;
+        }
+        input.appendChild(opt);
+      });
       input.addEventListener('change', () => {
         currentValues[field.name] = input.value;
         updatePreview();
@@ -615,6 +707,15 @@ document.addEventListener('DOMContentLoaded', () => {
       row.appendChild(op);
       row.appendChild(removeBtn);
       msgContainer.appendChild(row);
+      // Make each message row draggable to support reordering
+      row.setAttribute('draggable', 'true');
+      row.dataset.index = idx.toString();
+      row.addEventListener('dragstart', handleMsgDragStart);
+      row.addEventListener('dragover', handleMsgDragOver);
+      row.addEventListener('dragenter', handleMsgDragEnter);
+      row.addEventListener('dragleave', handleMsgDragLeave);
+      row.addEventListener('drop', handleMsgDrop);
+      row.addEventListener('dragend', handleMsgDragEnd);
     });
   }
 
@@ -704,6 +805,89 @@ document.addEventListener('DOMContentLoaded', () => {
       '\n' +
       'For more help, refer to HubSpot’s documentation on creating custom HTML email templates.\n'
     );
+  }
+
+  /**
+   * Attach drag‑and‑drop handlers to each field group within the
+   * configuration sidebar.  This allows the user to reorder the
+   * fields by dragging and dropping them into a new position.  The
+   * currentTemplate.fields array is updated to reflect the new
+   * ordering and the UI is reloaded accordingly.
+   */
+  function attachDragHandlersToFields() {
+    const groups = fieldsContainer.querySelectorAll('.field-group');
+    groups.forEach((group, index) => {
+      group.setAttribute('draggable', 'true');
+      group.dataset.index = index.toString();
+      group.addEventListener('dragstart', handleFieldDragStart);
+      group.addEventListener('dragover', handleFieldDragOver);
+      group.addEventListener('dragenter', handleFieldDragEnter);
+      group.addEventListener('dragleave', handleFieldDragLeave);
+      group.addEventListener('drop', handleFieldDrop);
+      group.addEventListener('dragend', handleFieldDragEnd);
+    });
+  }
+
+  // Drag event handlers for reordering fields
+  function handleFieldDragStart(event) {
+    dragStartIndex = parseInt(this.dataset.index, 10);
+    this.classList.add('dragging');
+  }
+  function handleFieldDragOver(event) {
+    event.preventDefault();
+  }
+  function handleFieldDragEnter(event) {
+    event.preventDefault();
+    this.classList.add('drag-over');
+  }
+  function handleFieldDragLeave(event) {
+    this.classList.remove('drag-over');
+  }
+  function handleFieldDrop(event) {
+    event.preventDefault();
+    const dropIndex = parseInt(this.dataset.index, 10);
+    if (dragStartIndex !== null && !isNaN(dropIndex) && dragStartIndex !== dropIndex) {
+      const moved = currentTemplate.fields.splice(dragStartIndex, 1)[0];
+      currentTemplate.fields.splice(dropIndex, 0, moved);
+      // Reload fields to reflect new order
+      loadFields(currentTemplate);
+      updatePreview();
+    }
+    this.classList.remove('drag-over');
+  }
+  function handleFieldDragEnd(event) {
+    this.classList.remove('dragging');
+  }
+
+  // Drag event handlers for reordering chat messages
+  function handleMsgDragStart(event) {
+    dragMsgStartIndex = parseInt(this.dataset.index, 10);
+    this.classList.add('dragging');
+  }
+  function handleMsgDragOver(event) {
+    event.preventDefault();
+  }
+  function handleMsgDragEnter(event) {
+    event.preventDefault();
+    this.classList.add('drag-over');
+  }
+  function handleMsgDragLeave(event) {
+    this.classList.remove('drag-over');
+  }
+  function handleMsgDrop(event) {
+    event.preventDefault();
+    const dropIdx = parseInt(this.dataset.index, 10);
+    if (dragMsgStartIndex !== null && !isNaN(dropIdx) && dragMsgStartIndex !== dropIdx) {
+      const movedMsg = chatMessages.splice(dragMsgStartIndex, 1)[0];
+      chatMessages.splice(dropIdx, 0, movedMsg);
+      // Re-render messages after reordering
+      renderMessages();
+      updatePreview();
+    }
+    this.classList.remove('drag-over');
+  }
+  function handleMsgDragEnd(event) {
+    this.classList.remove('dragging');
   }
 
   // Fetch the base64 images from json file and initialise the builder
