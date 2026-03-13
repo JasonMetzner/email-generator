@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Custom Email Template Builder</title>
+  <!-- Style for layout and basic controls -->
+  <link rel="stylesheet" href="builder.css" />
+  <!-- JSZip and FileSaver for exporting ZIP files -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</head>
+<body>
+  <div id="app-container">
+    <aside id="sidebar">
+      <h1>Email Template Builder</h1>
+      <label for="template-select">Choose Template:</label>
+      <select id="template-select">
+        <!-- Options populated by JS -->
+      </select>
+      <div id="fields-container"><!-- Dynamic fields will appear here --></div>
+      <button id="export-button">Export Template</button>
+    </aside>
+    <main id="preview-container">
+      <h2>Live Preview</h2>
+      <iframe id="preview-frame" title="Email Preview"></iframe>
+    </main>
+  </div>
+  <script src="builder.js"></script>
+</body>
+</html>

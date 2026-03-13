@@ -1,0 +1,126 @@
+/* Basic layout for the email template builder */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+#app-container {
+  display: flex;
+  flex: 1;
+  height: 100%;
+}
+
+#sidebar {
+  width: 300px;
+  background-color: #f4f4f4;
+  border-right: 1px solid #ccc;
+  padding: 20px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+#sidebar h1 {
+  font-size: 20px;
+  margin-top: 0;
+}
+
+#sidebar label {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+#template-select,
+#sidebar input[type="text"],
+#sidebar input[type="url"],
+#sidebar input[type="color"],
+#sidebar input[type="file"],
+#sidebar textarea,
+#sidebar select {
+  width: 100%;
+  padding: 6px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+#sidebar textarea {
+  resize: vertical;
+  min-height: 60px;
+  max-height: 200px;
+}
+
+#fields-container .field-group {
+  margin-bottom: 15px;
+}
+
+#sidebar button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+#sidebar button:hover {
+  background-color: #0056b3;
+}
+
+#preview-container {
+  flex: 1;
+  padding: 20px;
+  background-color: #fff;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+#preview-container h2 {
+  margin-top: 0;
+}
+
+#preview-frame {
+  width: 100%;
+  height: calc(100vh - 80px);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Styles for dynamic controls within fields container */
+.message-field {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.message-field input[type="text"] {
+  flex: 1;
+}
+
+.message-field select {
+  width: 80px;
+}
+
+.add-bubble-button {
+  display: block;
+  width: 100%;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.add-bubble-button:hover {
+  background-color: #218838;
+}

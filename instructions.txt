@@ -1,0 +1,43 @@
+Instructions for uploading custom HTML email templates to HubSpot
+================================================================
+
+The ZIP archives produced by this builder contain a `template.html` file and an
+`images` folder. Follow these steps to upload and start using your new email
+template in HubSpot:
+
+1. **Prepare your images**.  All of the images referenced in your template
+   are bundled in the `images/` folder.  Before they will display in
+   HubSpot, you need to make them live.  Open your HubSpot account and
+   navigate to **Marketing → Files** to launch the File Manager.  Upload
+   each image from the `images/` folder and copy the URL HubSpot assigns
+   to it.
+
+2. **Create a new HTML + HubL file**.  Go to **Content → Design Manager** and
+   click **File → New File**.  Choose **HTML + HubL** as the file type,
+   select **Email** for the template type, give your template a name and
+   click **Create**.  This opens a new blank template file in the design
+   editor.
+
+3. **Paste your HTML**.  Open the `template.html` file included in the ZIP
+   using a text editor and copy its contents.  Replace all of the
+   placeholder code in your new HubSpot template with the contents of
+   `template.html`.  In the `<img>` tags, replace the `src` attribute with
+   the URLs you copied from the File Manager in step 1 so HubSpot can find
+   your images.
+
+4. **Ensure the footer complies with HubSpot requirements**.  HubSpot
+   requires every email template to include a footer row containing your
+   company name, address and the `{{ unsubscribe_link }}` variable.  This
+   template already includes such a `<tr>` element in the footer.  Edit
+   the placeholders in the footer so they reflect your own company details.
+
+5. **Publish and use the template**.  Click **Publish changes** in the
+   Design Manager to save and activate your template.  In the left
+   sidebar, right‑click the template and choose **Create email** to build
+   a new email using this design.  You can continue to customise the
+   content, colours and images in the email editor.
+
+6. **Need help?**  For more detailed guidance, consult HubSpot’s
+   documentation on custom coded email templates.  It covers topics such
+   as module properties, inline CSS and best practices for responsive
+   design.
