@@ -11,7 +11,25 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  const templateSelect = document.getElementById('template-select');
+ 
+      // Force refresh of CSS by appending query parameter
+    const stylesheetLink = document.querySelector('link[rel="stylesheet"][href*="builder.css"]');
+    if (stylesheetLink) {
+        const href = stylesheetLink.getAttribute('href');
+        if (!href.includes('?')) {
+            stylesheetLink.setAttribute('href', href + '?v=2');
+ 
+            // Ensure CSS refresh after retrieving elements
+    const linkEl2 = document.querySelector('link[rel="stylesheet"][href*="builder.css"]');
+    if (linkEl2) {
+        const href2 = linkEl2.getAttribute('href');
+        if (!href2.includes('?')) {
+            linkEl2.setAttribute('href', href2 + '?v=3');
+        }
+    }
+}
+    }
+const templateSelect = document.getElementById('template-select');
   const fieldsContainer = document.getElementById('fields-container');
   const previewFrame = document.getElementById('preview-frame');
   const exportButton = document.getElementById('export-button');
