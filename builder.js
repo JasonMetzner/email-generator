@@ -538,9 +538,11 @@ document.addEventListener('DOMContentLoaded', () => {
         currentValues[field.name] = input.value;
         updatePreview();
       });
+      // Prevent inner controls from initiating a drag on their own
+      input.draggable = false;
     } else if (field.type === 'image') {
-      // For image fields we use a file input and display a small preview
-      input = document.createElement('input');
+       // For image fields we use a file input and display a small preview
+       input = document.createElement('input');
       input.type = 'file';
       input.accept = 'image/*';
       input.id = field.name;
@@ -550,6 +552,8 @@ document.addEventListener('DOMContentLoaded', () => {
       preview.style.objectFit = 'cover';
       preview.style.border = '1px solid #ccc';
       preview.style.marginTop = '5px';
+       // Prevent preview image from being draggable to avoid interfering with field reordering
+       preview.draggable = false;
       // Set initial preview
       if (currentValues[field.name]) {
         preview.src = currentValues[field.name];
@@ -588,6 +592,8 @@ document.addEventListener('DOMContentLoaded', () => {
         currentValues[field.name] = val.toString();
         updatePreview();
       });
+      // Prevent number input from initiating drag
+      input.draggable = false;
     } else if (field.type === 'color') {
       input = document.createElement('input');
       input.type = 'color';
@@ -597,6 +603,8 @@ document.addEventListener('DOMContentLoaded', () => {
         currentValues[field.name] = input.value;
         updatePreview();
       });
+      // Prevent color picker from initiating drag
+      input.draggable = false;
     } else if (field.type === 'select') {
       // Dropdown/select input for enumerated options
       input = document.createElement('select');
@@ -615,6 +623,8 @@ document.addEventListener('DOMContentLoaded', () => {
         currentValues[field.name] = input.value;
         updatePreview();
       });
+      // Prevent select from initiating drag
+      input.draggable = false;
     } else {
       // Default to text input
       input = document.createElement('input');
@@ -625,6 +635,8 @@ document.addEventListener('DOMContentLoaded', () => {
         currentValues[field.name] = input.value;
         updatePreview();
       });
+      // Prevent text input from initiating drag
+      input.draggable = false;
     }
     group.appendChild(input);
     fieldsContainer.appendChild(group);
@@ -652,6 +664,8 @@ document.addEventListener('DOMContentLoaded', () => {
         chatMessages[idx].text = txt.value;
         updatePreview();
       });
+      // Prevent message text input from starting a drag
+      txt.draggable = false;
       // Side select
       const sel = document.createElement('select');
       ['left', 'right'].forEach(side => {
@@ -666,6 +680,8 @@ document.addEventListener('DOMContentLoaded', () => {
         chatMessages[idx].side = sel.value;
         updatePreview();
       });
+      // Prevent select from starting a drag
+      sel.draggable = false;
       // Color picker
       const color = document.createElement('input');
       color.type = 'color';
@@ -674,6 +690,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chatMessages[idx].color = color.value;
         updatePreview();
       });
+      color.draggable = false;
       // Opacity number
       const op = document.createElement('input');
       op.type = 'number';
@@ -689,6 +706,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chatMessages[idx].opacity = val;
         updatePreview();
       });
+      op.draggable = false;
       // Remove button
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
@@ -700,6 +718,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderMessages();
         updatePreview();
       });
+      removeBtn.draggable = false;
       // Append all elements to row
       row.appendChild(txt);
       row.appendChild(sel);
